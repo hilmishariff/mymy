@@ -1,9 +1,15 @@
 #!/bin/bash
+# kill bitcoind service
+$ ps aux | grep bitcoind | grep -v grep | awk '{print $2}' | xargs -I {} kill {}
 
-cd ~/home/developer/src/hibitcoin
+# wait 10 seconds to make sure data finished written into database
+$ sleep 5
 
-# activate abe virtual env
-workon abe
+# stop broadcast services
+$ ps aux | grep notify_broadcast_server.py |  grep -v grep | awk '{print $2}' | xargs -I {} kill {}
 
-# start abe service on port 2750 for data loading
-python Abe/abe.py --config abe-data.conf &
+# stop abe services
+$ ps aux | grep abe.py |  grep -v grep | awk '{print $2}' | xargs -I {} kill {}
+
+# stop redis server
+$ redis-cli -p 6379 shutdown
